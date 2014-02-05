@@ -1,0 +1,11 @@
+<h1>Enter a position on the bet</h1>
+
+<%= form_for(@position, url: bet_positions_path) do |f| %>
+  <div class="field">
+    <%= f.label :position %><br>
+    <%= f.text_field :position %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
