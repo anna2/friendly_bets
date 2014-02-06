@@ -5,4 +5,5 @@ class User < ActiveRecord::Base
 
   has_many :positions, dependent: :destroy
   has_many :bets, through: :positions
+
 end

@@ -15,5 +15,22 @@
   <%= @bet.amount %>
 </p>
 
-<%= link_to 'Edit', edit_bet_path(@bet) %> |
+<p>
+  <strong>Creator:</strong>
+  <%= @admin[0].email %>
+</p>
+
+<p>
+  <strong>Participants:</strong><br>
+  <% @betters.each do |better| %>
+    <table>
+      <tr>
+        <td><%= better.email %></td>
+        <td><%= Position.find_by(bet_id: params[:id], user_id: better.id).position%></td>
+      </tr>
+    </table>
+  <% end  %>
+</p>
+
+<!-- <%= link_to 'Edit', edit_bet_path(@bet) %> | -->
 <%= link_to 'Back', bets_path %>
