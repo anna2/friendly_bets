@@ -25,8 +25,8 @@
           <td><%= bet.amount %></td>
           <td><%= Position.find_by(bet_id: bet.id, user_id: current_user.id).position%>
           <td><%= link_to 'Show', bet %></td>
-          <!-- <td><%= link_to 'Edit', edit_bet_path(bet) %></td> -->
-          <td><%= link_to 'Destroy', bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= link_to 'Invite friends', new_bet_invitation_path(bet) %></td>
+          <td><%= link_to 'Discuss', bet %></td>
         </tr>
       <% end %>
     </tbody>
