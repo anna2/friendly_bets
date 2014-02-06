@@ -1,9 +1,8 @@
 <% if current_user %>
 
   <h1>Welcome back to Friendly Bets!</h1>
-  <p><%= link_to "Create a new bet", new_bet_path %></p>
 
-  <% if @bets.size > 0 %>
+  <% if @accepted_bets.size > 0  %>
     <h3>Current bets:</h3>
     <table>
     <thead>
@@ -19,12 +18,43 @@
     </thead>
 
     <tbody>
-      <% @bets.each do |bet| %>
+      <% @accepted_bets.each do |bet| %>
         <tr>
           <td><%= bet.title %></td>
           <td><%= bet.description %></td>
           <td><%= bet.amount %></td>
           <td><%= Position.find_by(bet_id: bet.id, user_id: current_user.id).position%>
+          <td><%= link_to 'Show', bet %></td>
+          <td><%= link_to 'Edit', edit_bet_path(bet) %></td>
+          <td><%= link_to 'Destroy', bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+  <%end%>
+
+    <p><%= link_to "Create a new bet", new_bet_path %></p>
+
+    <% if @pending_bets.size > 0  %>
+    <h3>Your friends have invited you to the following bets:</h3>
+    <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @pending_bets.each do |bet| %>
+        <tr>
+          <td><%= bet.title %></td>
+          <td><%= bet.description %></td>
+          <td><%= bet.amount %></td>
           <td><%= link_to 'Show', bet %></td>
           <td><%= link_to 'Edit', edit_bet_path(bet) %></td>
           <td><%= link_to 'Destroy', bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>

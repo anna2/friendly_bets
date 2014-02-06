@@ -5,7 +5,10 @@ class BetsController < ApplicationController
   # GET /bets
   # GET /bets.json
   def index
-    @bets = current_user.bets
+    if current_user
+      @accepted_bets = Bet.joins(:positions).where(positions: {user_id: current_user.id, status: "accepted"})
+      @pending_bets =  Bet.joins(:positions).where(positions: {user_id: current_user.id, status: "pending"})
+    end
   end
 
   # GET /bets/1
