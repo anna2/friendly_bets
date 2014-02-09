@@ -1,0 +1,10 @@
+<h3>Who won the bet?</h3>
+<p>Select the bet winner from the list. Clicking "Close Bet" will officially end the betting and send Venmo payment links to losing betters.</p>
+
+<%= form_tag do %>
+  <% @betters.each do |better| %>
+    <%= check_box_tag(:winner, "#{better.email}") %>
+    <%= label_tag(:winner, "#{better.email}") %><br>
+  <% end  %>
+  <%= submit_tag("Close bet")%>
+<% end  %>
