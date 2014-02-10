@@ -64,6 +64,35 @@
     </table>
   <%end%>
 
+    <% if @closed_bets.size > 0  %>
+    <h3>Closed bets:</h3>
+    <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Did I win?</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @closed_bets.each do |bet| %>
+        <tr>
+          <td><%= bet.title %></td>
+          <td><%= bet.description %></td>
+          <td><%= bet.amount %></td>
+          <td><%= bet.winner_id == current_user.id ? "Yes!" : "No" %>
+          <td><%= link_to 'Show', bet %></td>
+          <td><%= link_to 'Discuss', bet %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+  <%end%>
+
 <% else %>
 
   <h1>Welcome to Friendly Bets!</h1>
