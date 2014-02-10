@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140206172536) do
+ActiveRecord::Schema.define(version: 20140210172537) do
 
   create_table "bets", force: true do |t|
     t.string   "title"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20140206172536) do
     t.integer  "amount"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "winner_id"
   end
 
   create_table "positions", force: true do |t|
@@ -27,6 +28,7 @@ ActiveRecord::Schema.define(version: 20140206172536) do
     t.boolean "admin"
     t.string  "position"
     t.string  "status"
+    t.boolean "win"
   end
 
   create_table "users", force: true do |t|

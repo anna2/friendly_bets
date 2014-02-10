@@ -1,6 +1,6 @@
 <% if current_user %>
 
-  <h1>Welcome back to Friendly Bets!</h1>
+  <h1>Welcome back to Friendly Bets, <%= current_user.email %>!</h1>
 
   <% if @accepted_bets.size > 0  %>
     <h3>Current bets:</h3>

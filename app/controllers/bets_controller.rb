@@ -1,5 +1,5 @@
 class BetsController < ApplicationController
-  before_action :set_bet, only: [:show, :edit, :update, :destroy]
+  before_action :set_bet, only: [:show, :edit, :update, :destroy, :close_2, :stats]
   before_action :authenticate_user!
 
   # GET /bets
@@ -71,7 +71,14 @@ class BetsController < ApplicationController
     @betters.each do |better|
       p = Position.find_by(bet_id: params[:id], user_id: better.id)
       p.update(status: "closed")
+      p.update(win: false)
     end
+
+    #record winner in bets table and positions table
+    @bet.update(winner_id: User.find_by(email: params[:winner]).id)
+    p = Position.find_by(bet_id: params[:id], user_id: User.where(email: params[:winner]))
+    p.update(win: true)
+
     #create venmo link
     @bet = Bet.find(params[:id])
     amount = @bet.amount
