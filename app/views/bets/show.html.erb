@@ -36,3 +36,19 @@
   <%= link_to 'Close Bet', close_bet_path %> |
 <% end %>
 <%= link_to 'Back', bets_path %>
+
+<h4>Comments:</h4>
+<% @bet.comments.each do |c| %>
+  <p>
+    Commenter: <%= User.find(c.user_id).email %><br>
+    <%= c.text%><br>
+    <%= image_tag c.photo.url(:medium) %>
+  </p>
+<% end %>
+
+<h4>Add a comment:</h4>
+<%= form_for [@bet, @bet.comments.build], :url => bet_comments_path(@bet), html: {multipart: true} do |f| %>
+  Comment: <%= f.text_field :text %><br>
+  Uploaded a photo: <%= f.file_field :photo%><br>
+  <%= f.submit %><br>
+<% end  %>

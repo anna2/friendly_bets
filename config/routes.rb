@@ -7,6 +7,7 @@ BetSettler::Application.routes.draw do
     end
     resources :positions
     resources :invitations
+    resources :comments
   end
   
   devise_for :users

@@ -50,3 +50,4 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'faraday'
+gem 'paperclip', '~> 3.0'
