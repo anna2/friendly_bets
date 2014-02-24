@@ -13,6 +13,8 @@ class InvitationsController < ApplicationController
         Position.create(user_id: friend.id, bet_id: params[:bet_id], status: "pending", admin: false )
       else
         #send email invite
+        InvitationNotifier.invited(email.strip, current_user.email, Bet.find(params[:bet_id])).deliver
+        #store invite in table
       end
     end
     redirect_to bets_path
