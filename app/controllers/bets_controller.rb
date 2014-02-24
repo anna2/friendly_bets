@@ -61,14 +61,17 @@ class BetsController < ApplicationController
     end
   end
 
+  #display page for admin to indicate winner
   def close
     @betters = User.joins(:positions).where(positions: {bet_id: params[:id]})
   end
 
+  #record winners, closed bet status, send mailers
   def close_2
     #change status to closed
     @betters = User.joins(:positions).where(positions: {bet_id: params[:id]})
-    @betters.each do |better|
+    @losers = @betters.select {|better| better.email != params[:winner]}
+    @losers.each do |better|
       p = Position.find_by(bet_id: params[:id], user_id: better.id)
       p.update(status: "closed")
       p.update(win: false)
@@ -82,9 +85,14 @@ class BetsController < ApplicationController
     #create venmo link
     @bet = Bet.find(params[:id])
     amount = @bet.amount
+    total_amount = amount * (@losers.size)
     payee = params[:winner]
     note = @bet.description
     venmo_link = create_venmo_link(amount, payee, note)
+
+    #mail winner and losers
+    BetNotifier.win_notification(payee, total_amount, @bet).deliver
+    BetNotifier.payment_link(@losers, venmo_link, @bet, payee, total_amount).deliver
 
     redirect_to stats_bet_path
   end
@@ -108,7 +116,7 @@ class BetsController < ApplicationController
     def create_venmo_link(amount, payee, note, user = '')
       root_url = 'https://venmo.com/'
       params = URI.encode_www_form([
-                                    ['type', "pay"],
+                                    ['txn', "pay"],
                                     ['recipients', "#{payee}"],
                                     ['amount', "#{amount}"],
                                     ['note', "#{note}"],
