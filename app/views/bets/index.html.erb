@@ -1,6 +1,8 @@
-<h1>Listing bets</h1>
+<% if current_user %>
 
-<% if @accepted_bets.size > 0  %>
+  <h1>Your Bets Dashboard:</h1>
+
+  <% if @accepted_bets.size > 0  %>
     <h3>Current bets:</h3>
     <table>
     <thead>
@@ -23,17 +25,17 @@
           <td><%= bet.amount %></td>
           <td><%= Position.find_by(bet_id: bet.id, user_id: current_user.id).position%>
           <td><%= link_to 'Show', bet %></td>
-          <!-- <td><%= link_to 'Edit', edit_bet_path(bet) %></td> -->
-          <td><%= link_to 'Destroy', bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= link_to 'Invite friends', new_bet_invitation_path(bet) %></td>
+          <td><%= link_to 'Discuss', bet %></td>
         </tr>
       <% end %>
     </tbody>
     </table>
-<% end %>
+  <%end%>
 
-<p><%= link_to "Create a new bet", new_bet_path %></p>
+    <p><%= link_to "Create a new bet", new_bet_path %></p>
 
-<% if @pending_bets.size > 0  %>
+    <% if @pending_bets.size > 0  %>
     <h3>Your friends have invited you to the following bets:</h3>
     <table>
     <thead>
@@ -42,7 +44,7 @@
         <th>Description</th>
         <th>Amount</th>
         <th></th>
-        <th></th>
+        <th>th</th>
         <th></th>
       </tr>
     </thead>
@@ -54,10 +56,45 @@
           <td><%= bet.description %></td>
           <td><%= bet.amount %></td>
           <td><%= link_to 'Show', bet %></td>
-          <!-- <td><%= link_to 'Edit', edit_bet_path(bet) %></td> -->
-          <td><%= link_to 'Destroy', bet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= link_to 'Join', new_bet_position_path(bet)%>
+          <td><%= link_to 'Reject', bet_position_path(bet, Position.where(user_id: current_user.id, bet_id: bet.id).take.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
         </tr>
       <% end %>
     </tbody>
     </table>
-<% end %>
+  <%end%>
+
+    <% if @closed_bets.size > 0  %>
+    <h3>Closed bets:</h3>
+    <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Amount</th>
+        <th>Did I win?</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @closed_bets.each do |bet| %>
+        <tr>
+          <td><%= bet.title %></td>
+          <td><%= bet.description %></td>
+          <td><%= bet.amount %></td>
+          <td><%= bet.winner_id == current_user.id ? "Yes!" : "No" %>
+          <td><%= link_to 'Show', bet %></td>
+          <td><%= link_to 'Discuss', bet %></td>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+  <%end%>
+
+<% else %>
+
+    <h3>Are you logged in?</h3>
+
+<%end%>
