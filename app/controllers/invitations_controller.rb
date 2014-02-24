@@ -14,7 +14,6 @@ class InvitationsController < ApplicationController
       else
         #send email invite
         InvitationNotifier.invited(email.strip, current_user.email, Bet.find(params[:bet_id])).deliver
-        #store invite in table
       end
     end
     redirect_to bets_path
