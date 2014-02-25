@@ -49,5 +49,9 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'faraday'
 gem 'paperclip', '~> 3.0'
+
+gem 'bootstrap-sass'
+group :development do
+  gem 'rails_layout'
+end
