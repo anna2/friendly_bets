@@ -1,54 +1,81 @@
-<p id="notice"><%= notice %></p>
+<div class="row">
+  <div class="col-md-4">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Bet Details</h3>
+      </div>
+      <div class="panel-body">
+        <p>
+          <strong>Title:</strong>
+          <%= @bet.title %>
+        </p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @bet.title %>
-</p>
+        <p>
+          <strong>Description:</strong>
+          <%= @bet.description %>
+        </p>
 
-<p>
-  <strong>Description:</strong>
-  <%= @bet.description %>
-</p>
+        <p>
+          <strong>Amount:</strong>
+          $<%= @bet.amount %>
+        </p>
 
-<p>
-  <strong>Amount:</strong>
-  <%= @bet.amount %>
-</p>
+        <p>
+          <strong>Creator:</strong>
+          <%= @admin.email %>
+        </p>
 
-<p>
-  <strong>Creator:</strong>
-  <%= @admin.email %>
-</p>
+        <p>
+          <strong>Participants:</strong><br>
+          <table class="table table-striped table-hover table-bordered">
 
-<p>
-  <strong>Participants:</strong><br>
-  <% @betters.each do |better| %>
-    <table>
-      <tr>
-        <td><%= better.email %></td>
-        <td><%= Position.find_by(bet_id: params[:id], user_id: better.id).position%></td>
-      </tr>
-    </table>
-  <% end  %>
-</p>
+            <tbody>
+              <% @betters.each do |better| %>
+                <tr>
+                  <td><%= better.email %></td>
+                  <td><%= Position.find_by(bet_id: params[:id], user_id: better.id).position%></td>
+                </tr>
+              <% end  %>
+            </tbody>
+          </table>
 
-<% if @admin.id == current_user.id %>
-  <%= link_to 'Close Bet', close_bet_path %> |
-<% end %>
-<%= link_to 'Back', bets_path %>
+        </p>
 
-<h4>Comments:</h4>
-<% @bet.comments.each do |c| %>
-  <p>
-    Commenter: <%= User.find(c.user_id).email %><br>
-    <%= c.text%><br>
-    <%= image_tag c.photo.url(:medium) %>
-  </p>
-<% end %>
+        <% if @admin.id == current_user.id %>
+          <%= link_to 'Close Bet', close_bet_path %> |
+        <% end %>
+        <%= link_to 'Invite Friends', new_bet_invitation_path(@bet)%> | 
+        <%= link_to 'Back', bets_path %>
 
-<h4>Add a comment:</h4>
-<%= form_for [@bet, @bet.comments.build], :url => bet_comments_path(@bet), html: {multipart: true} do |f| %>
-  Comment: <%= f.text_field :text %><br>
-  Uploaded a photo: <%= f.file_field :photo%><br>
-  <%= f.submit %><br>
-<% end  %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4>Comments:</h4></div>
+      <div class="panel-body">
+        <% if @bet.comments.size == 0 %>
+          <p>No comments yet.</p>
+        <% else %>
+          <% @bet.comments.each do |c| %>
+            <p>
+              Commenter: <%= User.find(c.user_id).email %><br>
+              <%= c.text%><br>
+              <%= image_tag c.photo.url(:medium) %>
+            </p>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="well">
+      <h4>Add a comment:</h4>
+      <%= form_for [@bet, @bet.comments.build], :url => bet_comments_path(@bet), html: {multipart: true} do |f| %>
+        Comment: <%= f.text_field :text %><br>
+        Uploaded a photo: <%= f.file_field :photo%><br>
+        <%= f.submit %><br>
+      <% end  %>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,14 @@
-<h3>Invite friends</h3>
+<div class="col-md-6 col-md-offset-3">
+  <div class="well">
+
+    <legend><h3>Invite friends</h3></legend>
 <p>Enter their email addresses, separated by commas, in the box below. If they don't yet use Friendly Bets, we'll send them an invitation to join.</p>
 
 <%= form_tag(controller: "invitations", action: "create", method: "post") do  %>
   <%= label_tag(:friends, "Email addresses:") %><br>
-  <%= text_area_tag(:friends, "example@example.com") %><br>
+  <%= text_area_tag(:friends, "example@example.com", size: "25x10") %><br>
   <%= submit_tag("Invite friends") %>
 <% end  %>
 <%= link_to "Skip this step", bets_path %>
+  </div>
+</div>

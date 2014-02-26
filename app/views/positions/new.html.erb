@@ -1,4 +1,7 @@
-<h1>Enter a position on the bet</h1>
+<div class="col-md-6 col-md-offset-3">
+  <div class="well">
+
+    <legend><h1>Enter a position on the bet</h1></legend>
 
 <%= form_for(@position, url: bet_positions_path) do |f| %>
   <div class="field">
@@ -9,3 +12,6 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+  </div>
+</div>

@@ -36,6 +36,7 @@ class BetsController < ApplicationController
     @user.save
     @bet.save
     redirect_to new_bet_position_path(@bet)
+
   end
 
   # PATCH/PUT /bets/1

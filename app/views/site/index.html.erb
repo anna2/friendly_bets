@@ -1,6 +1,9 @@
+<div class="jumbotron">
 <% if current_user %>
 
-  <h1>Welcome back to Friendly Bets, <%= current_user.email %>!</h1>
+  <h1>Welcome to Friendly Bets, <%= current_user.email %>!</h1>
+  <p>Get started by creating a new bet and inviting your friends!</p>
+      <%= link_to "Create a new bet", new_bet_path, class: "btn btn-warning" %>
 
 <% else %>
 
@@ -14,4 +17,7 @@
     <li>Settle up.</li>
   </ol>
 
-<%end%>
+      <%= link_to "Sign up now!", new_user_registration_path, class: "btn btn-warning" %>
+
+<% end %>
+</div>

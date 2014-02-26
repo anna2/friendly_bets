@@ -3,6 +3,8 @@
 
 @import "flatly";
 
+body { padding-top: 80px; }
+
 // make all images responsive by default
 img {
   @extend .img-responsive;
