@@ -1,5 +1,5 @@
 class BetsController < ApplicationController
-  before_action :set_bet, only: [:show, :edit, :update, :destroy, :close_2, :stats]
+  before_action :set_bet, only: [:show, :update, :destroy, :close_2, :stats]
   before_action :authenticate_user!
 
   # GET /bets
@@ -24,19 +24,19 @@ class BetsController < ApplicationController
     @bet = Bet.new
   end
 
-  # GET /bets/1/edit
-  def edit
-  end
-
   # POST /bets
   # POST /bets.json
   def create
-    @user = User.find(current_user.id)
-    @bet = @user.bets.build(bet_params)
-    @user.save
-    @bet.save
-    redirect_to new_bet_position_path(@bet)
-
+    @bet = Bet.new(bet_params)
+    respond_to do |format|
+      if @bet.save
+        format.html { redirect_to new_bet_position_path(@bet) }
+        format.html { render json: @bet, status: :created, location: @bet }
+      else
+        format.html { render action: "new" }
+        format.json {render json: @bet.errors, status: unprocessable_entry }
+      end
+    end
   end
 
   # PATCH/PUT /bets/1

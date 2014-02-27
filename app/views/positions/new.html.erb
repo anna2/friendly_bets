@@ -4,6 +4,18 @@
     <legend><h1>Enter a position on the bet</h1></legend>
 
 <%= form_for(@position, url: bet_positions_path) do |f| %>
+  <% if @position.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@position.errors.count, "error") %> prohibited this position from being saved:</h2>
+
+      <ul>
+      <% @position.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
   <div class="field">
     <%= f.label :position %><br>
     <%= f.text_field :position %>
