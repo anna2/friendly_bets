@@ -5,6 +5,17 @@
 <p>Enter their email addresses, separated by commas, in the box below. If they don't yet use Friendly Bets, we'll send them an invitation to join.</p>
 
 <%= form_tag(controller: "invitations", action: "create", method: "post") do  %>
+  <% if @invitation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@invitation.errors.count, "error") %> prohibited friends from being invited:</h2>
+
+      <ul>
+      <% @invitation.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
   <%= label_tag(:friends, "Email addresses:") %><br>
   <%= text_area_tag(:friends, "example@example.com", size: "25x10") %><br>
   <%= submit_tag("Invite friends") %>
