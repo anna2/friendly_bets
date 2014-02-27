@@ -16,7 +16,7 @@ class BetsController < ApplicationController
   # GET /bets/1.json
   def show
     @admin = User.joins(:positions).where(positions: {bet_id: params[:id], admin: true}).take
-    @betters = User.joins(:positions).where(positions: {bet_id: params[:id]})
+    @betters = User.joins(:positions).where(positions: {bet_id: params[:id], status: "accepted"})
   end
 
   # GET /bets/new
