@@ -20,6 +20,7 @@ class InvitationsController < ApplicationController
             InvitationNotifier.invited(email.strip, current_user.email, Bet.find(params[:bet_id])).deliver
           end
         end
+        flash[:success] = "You successfully invited friends to the bet!"
         format.html { redirect_to bets_path }
         format.json { render json: @invitation, status: :created, location: @invitation }
       else
