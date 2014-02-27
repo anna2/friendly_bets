@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140211185148) do
+ActiveRecord::Schema.define(version: 20140227183338) do
 
   create_table "bets", force: true do |t|
     t.string   "title"
@@ -44,13 +44,17 @@ ActiveRecord::Schema.define(version: 20140211185148) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "email",               default: "", null: false
-    t.string   "encrypted_password",  default: "", null: false
+    t.string   "email",                default: "", null: false
+    t.string   "encrypted_password",   default: "", null: false
     t.datetime "remember_created_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
   end
 
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
   add_index "users", ["email"], name: "index_users_on_email", unique: true
 
 end
