@@ -1,12 +1,14 @@
 require 'test_helper'
 
 class InvitationNotifierTest < ActionMailer::TestCase
+  fixtures :bets
+
   test "invited" do
-    mail = InvitationNotifier.invited
-    assert_equal "Invited", mail.subject
+    mail = InvitationNotifier.invited("to@example.org", "better1@example.com", bets(:one))
+
+    assert_equal "better1@example.com invited you to Friendly Bets!", mail.subject
     assert_equal ["to@example.org"], mail.to
-    assert_equal ["from@example.com"], mail.from
-    assert_match "Hi", mail.body.encoded
+    assert_equal ["friendly_bets@example.com"], mail.from
   end
 
 end
