@@ -1,5 +1,5 @@
 class BetsController < ApplicationController
-  before_action :set_bet, only: [:show, :update, :destroy, :close_2, :stats]
+  before_action :set_bet, only: [:show, :update, :destroy, :close, :close_2, :stats]
   before_action :authenticate_user!
 
   # GET /bets
@@ -15,13 +15,17 @@ class BetsController < ApplicationController
   # GET /bets/1
   # GET /bets/1.json
   def show
-    @admin = User.joins(:positions).where(positions: {bet_id: params[:id], admin: true}).take
-    @betters = User.joins(:positions).where(positions: {bet_id: params[:id], status: "accepted"})
+    @admin = User.joins(:positions).where(positions: {bet_id: @bet.id, admin: true}).take
+    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id, status: "accepted"})
   end
 
   # GET /bets/new
   def new
     @bet = Bet.new
+  end
+
+  # GET /bets/1/edit
+  def edit
   end
 
   # POST /bets
@@ -65,34 +69,31 @@ class BetsController < ApplicationController
 
   #display page for admin to indicate winner
   def close
-    @betters = User.joins(:positions).where(positions: {bet_id: params[:id]})
+    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id})
   end
 
   #record winners, closed bet status, send mailers
   def close_2
-    #change status to closed
-    @betters = User.joins(:positions).where(positions: {bet_id: params[:id]})
-    @losers = @betters.select {|better| better.email != params[:winner]}
+    #change position statuses to closed
+    payee = params[:winner]
+    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id})
+    @losers = @betters.select {|better| better.email != payee}
     @losers.each do |better|
-      p = Position.find_by(bet_id: params[:id], user_id: better.id)
+      p = Position.find_by(bet_id: @bet.id, user_id: better.id)
       p.update(status: "closed")
       p.update(win: false)
     end
 
     #record winner in bets table and positions table
     @bet.update(winner_id: User.find_by(email: params[:winner]).id)
-    p = Position.find_by(bet_id: params[:id], user_id: User.where(email: params[:winner]))
+    p = Position.find_by(bet_id: @bet.id, user_id: User.where(email: params[:winner]))
     p.update(win: true)
 
     #create venmo link
-    @bet = Bet.find(params[:id])
-    amount = @bet.amount
-    total_amount = amount * (@losers.size)
-    payee = params[:winner]
-    note = @bet.description
-    venmo_link = create_venmo_link(amount, payee, note)
+    venmo_link = create_venmo_link(@bet.amount, payee, @bet.description)
 
     #mail winner and losers
+    total_amount = @bet.amount * @losers.size
     BetNotifier.win_notification(payee, total_amount, @bet).deliver
     BetNotifier.payment_link(@losers, venmo_link, @bet, payee, total_amount).deliver
 
