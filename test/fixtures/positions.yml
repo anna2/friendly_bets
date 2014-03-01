@@ -1,0 +1,36 @@
+
+one:
+  id: 1
+  user_id: 1
+  bet_id: 1
+  admin: true
+  position: "hi"
+  status: nil
+  win: nil
+
+two:
+  id: 2
+  user_id: 1
+  bet_id: 2
+  admin: false
+  position: "hi"
+  status: nil
+  win: nil
+
+three:
+  id: 3
+  user_id: 2
+  bet_id: 1
+  admin: false
+  position: "hi"
+  status: nil
+  win: nil
+
+four:
+  id: 4
+  user_id: 2
+  bet_id: 2
+  admin: true
+  position: "hi"
+  status: nil
+  win: nil
