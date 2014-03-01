@@ -10,4 +10,9 @@ class SiteControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "should get help page" do
+    get :help
+    assert_response :success
+  end
+
 end
