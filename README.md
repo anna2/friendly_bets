@@ -4,7 +4,11 @@ Friendly Bets is a Ruby on Rails web app that lets users keep track of bets with
 
 ![Welcome screen](/welcome.png)
 
+A central dashboard for managing bet invitations, current bets, and closed bets:
+
 ![Bets Dasboard](/bet_dashboard.png)
+
+A page for viewing individual bet details, posting commentary and opinions, inviting more participants, etc:
 
 ![Bet Details](/bet_details.png)
 
