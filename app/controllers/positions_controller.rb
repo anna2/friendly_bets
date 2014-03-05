@@ -7,10 +7,16 @@ class PositionsController < ApplicationController
   end
 
   def create
-    @position = Position.new(position: params[:position][:position], bet_id: params[:bet_id], user_id: current_user.id, status: "accepted")
+    # first, delete position record on pending bet
+    if Position.where(bet_id: @bet.id, user_id: current_user.id)
+      Position.where(bet_id: @bet.id, user_id: current_user.id).destroy_all
+    end
+    
+    # now, create position on accepted bet 
+    @position = Position.new(position: params[:position][:position], bet_id: @bet.id, user_id: current_user.id, status: "accepted")
     respond_to do |format|
       if @position.save
-        if Position.where(bet_id: params[:bet_id]).size == 1
+        if Position.where(bet_id: @bet.id).size == 1
           @position.update(admin: true)
         else
           @position.update(admin: false)
