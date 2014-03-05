@@ -1,5 +1,5 @@
 class InvitationNotifier < ActionMailer::Base
-  default from: "friendly_bets@example.com"
+  default from: "friendlybetsnotification@gmail.com"
 
   def invited(invitee, inviter, bet)
     @inviter = inviter

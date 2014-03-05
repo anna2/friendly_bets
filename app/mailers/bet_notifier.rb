@@ -1,5 +1,5 @@
 class BetNotifier < ActionMailer::Base
-  default from: "friendly_bets@example.com"
+  default from: "friendlybetsnotification@gmail.com"
 
   def payment_link(losers, link, bet, payee, total_amount)
     @payee = payee
