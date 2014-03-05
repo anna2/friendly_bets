@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
   has_many :bets, through: :positions
   has_many :comments
 
+  validates_uniqueness_of :email, case_sensitive: false
+
   #temporarily skip required confirmation of email
   #remove in production
   protected

@@ -33,7 +33,7 @@ class PositionsController < ApplicationController
   def destroy
     @position = Position.find(params[:id])
     @position.destroy
-    redirect_to root_path
+    redirect_to bets_path
   end
 
   private

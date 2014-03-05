@@ -10,7 +10,7 @@ class InvitationsController < ApplicationController
       if @invitation.valid?
         emails = @invitation.friends.split(/[\s,]+/)
         emails.each do |email|
-          friend = User.find_by(email: email.strip)
+          friend = User.find_by(email: email.strip.downcase)
           if friend
             #create join entry
             p = Position.new(user_id: friend.id, bet_id: params[:bet_id], status: "pending", admin: false)
