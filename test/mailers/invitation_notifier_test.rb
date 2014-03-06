@@ -8,7 +8,7 @@ class InvitationNotifierTest < ActionMailer::TestCase
 
     assert_equal "better1@example.com invited you to Friendly Bets!", mail.subject
     assert_equal ["to@example.org"], mail.to
-    assert_equal ["friendly_bets@example.com"], mail.from
+    assert_equal ["friendlybetsnotification@gmail.com"], mail.from
   end
 
 end
