@@ -44,6 +44,10 @@
         <% if @admin.id == current_user.id %>
           <%= link_to 'Close Bet', close_bet_path %> |
         <% end %>
+        <% if @position.status == "pending" %>
+          <%= link_to 'Join', new_bet_position_path(@bet)%> | 
+          <%= link_to 'Reject', bet_position_path(@bet, Position.where(user_id: current_user.id, bet_id: @bet.id, admin: false).take.id), method: :delete, data: { confirm: 'Are you sure?' } %> | 
+        <% end %>
         <%= link_to 'Invite Friends', new_bet_invitation_path(@bet)%> | 
         <%= link_to 'Back', bets_path %>
 

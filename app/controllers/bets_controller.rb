@@ -17,6 +17,7 @@ class BetsController < ApplicationController
   def show
     @admin = User.joins(:positions).where(positions: {bet_id: @bet.id, admin: true}).take
     @betters = User.joins(:positions).where(positions: {bet_id: @bet.id, status: "accepted"})
+    @position = Position.where(user_id: current_user.id, bet_id: @bet.id).take
   end
 
   # GET /bets/new
