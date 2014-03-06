@@ -8,13 +8,13 @@ class PositionsController < ApplicationController
 
   def create
     # do not allow overwriting of old positions
-    if Position.where(bet_id: @bet.id, user_id: current_user.id, status: "accepted").size != 0
+    if Position.find_by(bet_id: @bet.id, user_id: current_user.id, status: "accepted")
       flash[:error] = "You already have a position on this bet."
       redirect_to bet_path(@bet)
     else
       #handle position on newly-accepted bets
-      if Position.where(bet_id: @bet.id, user_id: current_user.id, status: "pending").size == 1
-        @position = Position.where(bet_id: @bet.id, user_id: current_user.id)
+      if Position.find_by(bet_id: @bet.id, user_id: current_user.id, status: "pending")
+        @position = Position.find_by(bet_id: @bet.id, user_id: current_user.id)
         @position.update(position: params[:position][:position])
         @position.update(status: "accepted")
         @position.update(admin: false)
