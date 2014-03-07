@@ -12,5 +12,6 @@ BetSettler::Application.routes.draw do
   
   devise_for :users
   get '/help', to: 'site#help', as: 'help'
+  get '/stats', to: 'site#stats', as: 'stats'
   root "site#index"
 end

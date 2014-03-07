@@ -1,0 +1,16 @@
+<%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+
+<div class="col-md-6 col-md-offset-3" style="text-align:center;">
+
+<h1>Your Friendly Bets Stats</h1>
+
+<h3>Percentage of Bets Won/Lost/Pending</h3>
+<%= pie_chart(@data2) %>
+
+<h3>Money Earned/Lost</h3>
+<%= column_chart @data1 %>
+
+<h3>Earnings Over Time</h3>
+<p>This data coming soon.</p>
+
+</div>
