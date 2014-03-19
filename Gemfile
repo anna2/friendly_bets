@@ -63,3 +63,4 @@ group :production do
 end
 
 gem "chartkick"
+gem 'newrelic_rpm'
