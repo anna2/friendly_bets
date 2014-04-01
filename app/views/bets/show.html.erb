@@ -66,7 +66,9 @@
             <p>
               Commenter: <%= User.find(c.user_id).email %><br>
               <%= c.text%><br>
-              <%= image_tag c.photo.url(:medium) %>
+              <% unless c.photo_file_name.nil?  %>
+                <%= image_tag c.photo.url(:medium) %>
+              <% end %>
             </p>
           <% end %>
         <% end %>
