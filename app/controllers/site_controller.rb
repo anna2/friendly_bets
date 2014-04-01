@@ -12,7 +12,9 @@ class SiteController < ApplicationController
     # money earned/lost bar chart
     @money_earned = 0
     Position.where(status: "closed", win: true).each do |win|
-      @money_earned += win.money_earned
+      unless win.money_earned.nil?
+        @money_earned += win.money_earned
+      end
     end
 
     @money_lost = 0
