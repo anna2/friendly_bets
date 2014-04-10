@@ -30,7 +30,7 @@
               <td>$<%= bet.amount %></td>
               <td><%= link_to 'More...', bet %></td>
               <td><%= link_to 'Join', new_bet_position_path(bet)%></td>
-              <td><%= link_to 'Reject', bet_position_path(bet, Position.where(user_id: current_user.id, bet_id: bet.id, admin: false).take.id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+              <td><%= link_to 'Reject', bet_position_path(bet, Position.current(current_user, bet).id), method: :delete, data: { confirm: 'Are you sure?' } %></td>
             </tr>
           <% end %>
         </tbody>
@@ -58,7 +58,7 @@
                 <td><%= bet.title %></td>
                 <td><%= bet.description %></td>
                 <td>$<%= bet.amount %></td>
-                <td><%= Position.find_by(bet_id: bet.id, user_id: current_user.id).position%></td>
+                <td><%= Position.current(current_user, bet).position%></td>
                 <td><%= link_to 'More...', bet %></td>
               </tr>
             <% end %>

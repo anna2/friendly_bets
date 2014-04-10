@@ -33,7 +33,7 @@
               <% @betters.each do |better| %>
                 <tr>
                   <td><%= better.email %></td>
-                  <td><%= Position.find_by(bet_id: params[:id], user_id: better.id).position%></td>
+                  <td><%= Position.current(better, @bet).position%></td>
                 </tr>
               <% end  %>
             </tbody>
@@ -41,14 +41,16 @@
 
         </p>
 
-        <% if @admin.id == current_user.id %>
+        <% if (@admin == current_user) && (@position.status == "accepted")  %>
           <%= link_to 'Close Bet', close_bet_path %> |
         <% end %>
         <% if @position.status == "pending" %>
           <%= link_to 'Join', new_bet_position_path(@bet)%> | 
-          <%= link_to 'Reject', bet_position_path(@bet, Position.where(user_id: current_user.id, bet_id: @bet.id, admin: false).take.id), method: :delete, data: { confirm: 'Are you sure?' } %> | 
+          <%= link_to 'Reject', bet_position_path(@bet, Position.current(current_user, @bet).id), method: :delete, data: { confirm: 'Are you sure?' } %> | 
         <% end %>
-        <%= link_to 'Invite Friends', new_bet_invitation_path(@bet)%> | 
+        <% if @position.status == "accepted" %>
+          <%= link_to 'Invite Friends', new_bet_invitation_path(@bet)%> | 
+        <% end %>
         <%= link_to 'Back', bets_path %>
 
       </div>
