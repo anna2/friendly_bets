@@ -11,14 +11,14 @@ class SiteController < ApplicationController
   def stats
     # money earned/lost bar chart
     @money_earned = 0
-    Position.where(user_id: current_user.id, status: "closed", win: true).each do |win|
+    Position.all_wins_for_user(current_user).each do |win|
       unless win.money_earned.nil?
         @money_earned += win.money_earned
       end
     end
 
     @money_lost = 0
-    Position.where(user_id: current_user.id, status: "closed", win: false).each do |loss|
+    Position.all_losses_for_user(current_user).each do |loss|
       unless loss.money_lost.nil?
         @money_lost += loss.money_lost
       end
@@ -26,11 +26,13 @@ class SiteController < ApplicationController
     @data1 = {"Money earned" => @money_earned, "Money Lost" => @money_lost}
 
     # bets won/lost pie chart
-    @bets_won = Bet.where(winner_id: current_user.id).size
-    @bets_lost = Position.where(user_id: current_user.id, win: false).size
-    @bets_current = Position.where(user_id: current_user.id, win: nil).size
-    @data2 = { "Won" => @bets_won, "Lost" => @bets_lost, "Pending" => @bets_current}
+    @bets_won = Bet.all_wins_for_user(current_user).size
+    @bets_lost = Position.all_losses_for_user(current_user).size
+    @bets_current = Position.ongoing_bets(current_user).size
+    @data2 = { "Won" => @bets_won,
+      "Lost" => @bets_lost,
+      "Pending" => @bets_current }
 
-    #earnings over time
+    #create section for earnings over time
   end
 end

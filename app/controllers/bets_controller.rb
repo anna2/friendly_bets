@@ -1,32 +1,25 @@
 class BetsController < ApplicationController
   before_action :set_bet, only: [:show, :update, :destroy, :close, :close_2, :stats]
+  before_action :admin, only: [:show, :close, :close_2]
+  before_action :ensure_user_is_admin, only: [:close, :close_2]
   before_action :authenticate_user!
 
   # GET /bets
-  # GET /bets.json
-  def index
-    if current_user
-      @accepted_bets = Bet.joins(:positions).where(positions: {user_id: current_user.id, status: "accepted"})
-      @pending_bets =  Bet.joins(:positions).where(positions: {user_id: current_user.id, status: "pending"})
-      @closed_bets = Bet.joins(:positions).where(positions: {user_id: current_user.id, status: "closed"})
-    end
+  def index 
+      @accepted_bets = Bet.accepted(current_user)
+      @pending_bets =  Bet.pending(current_user)
+      @closed_bets = Bet.closed(current_user)
   end
 
   # GET /bets/1
-  # GET /bets/1.json
   def show
-    @admin = User.joins(:positions).where(positions: {bet_id: @bet.id, admin: true}).take
-    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id, status: "accepted"})
-    @position = Position.where(user_id: current_user.id, bet_id: @bet.id).take
+    @betters = User.participating(@bet)
+    @position = Position.current(current_user, @bet)
   end
 
   # GET /bets/new
   def new
     @bet = Bet.new
-  end
-
-  # GET /bets/1/edit
-  def edit
   end
 
   # POST /bets
@@ -44,75 +37,63 @@ class BetsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /bets/1
-  # PATCH/PUT /bets/1.json
-  def update
-    respond_to do |format|
-      if @bet.update(bet_params)
-        format.html { redirect_to @bet, notice: 'Bet was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: 'edit' }
-        format.json { render json: @bet.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /bets/1
-  # DELETE /bets/1.json
-  def destroy
-    @bet.destroy
-    respond_to do |format|
-      format.html { redirect_to bets_url }
-      format.json { head :no_content }
-    end
-  end
-
   #display page for admin to indicate winner
   def close
-    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id, status: "accepted"})
+      @betters = User.participating(@bet)
   end
 
   #record winners, closed bet status, send mailers
   def close_2
-    #change position statuses to closed
-    payee = params[:winner]
-    @betters = User.joins(:positions).where(positions: {bet_id: @bet.id})
-    @losers = @betters.select {|better| better.email != payee}
-    @losers.each do |better|
-      p = Position.find_by(bet_id: @bet.id, user_id: better.id)
-      p.update(status: "closed")
-      p.update(win: false)
-      p.update(money_earned: 0)
-      p.update(money_lost: @bet.amount)
+    begin
+      Position.transaction do 
+        # set up a few key variables
+        @winner = User.winner(params[:winner])
+        @betters = User.participating(@bet)
+        @losers = @betters.select {|better| better != @winner}
+
+        #record winner in bets table
+        @bet.update(winner_id: @winner.id)
+
+        #update winner's position record
+        p = Position.current(@winner, @bet)
+        p.win = true
+        p.status = "closed"
+        @total_amount = @bet.amount * @losers.size
+        p.money_earned = @total_amount
+        p.money_lost = 0
+        p.save
+
+
+        #update losers' position records
+        @losers.each do |better|
+          p = Position.current(better, @bet)
+          p.status = "closed"
+          p.win = false
+          p.money_earned = 0
+          p.money_lost = @bet.amount
+          p.save
+        end
+      end
+    rescue ActiveRecord::RecordNotSaved, ActiveRecord::RecordInvalid
+      flash[:error] = "Something went wrong while closing this bet. Please try again."
+      redirect_to bet_path(@bet)
     end
 
-    #record winner in bets table and positions table
-    @bet.update(winner_id: User.find_by(email: params[:winner]).id)
-    p = Position.find_by(bet_id: @bet.id, user_id: User.where(email: params[:winner]))
-    p.update(win: true)
-    p.update(status: "closed")
-    total_amount = @bet.amount * @losers.size
-    p.update(money_earned: total_amount)
-    p.update(money_lost: 0)
-
     #create venmo link
-    venmo_link = create_venmo_link(@bet.amount, payee, @bet.description)
+    venmo_link = create_venmo_link(@bet.amount, @winner.email, @bet.description)
 
     #mail winner and losers
-    BetNotifier.win_notification(payee, total_amount, @bet).deliver
-    BetNotifier.payment_link(@losers, venmo_link, @bet, payee, total_amount).deliver
+    BetNotifier.win_notification(@winner.email, @total_amount, @bet).deliver
+    BetNotifier.payment_link(@losers, venmo_link, @bet, @winner.email, @total_amount).deliver
 
     redirect_to stats_path
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_bet
       @bet = Bet.find(params[:id])
     end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
+    
     def bet_params
       params.require(:bet).permit(:title, :description, :amount)
     end
@@ -128,5 +109,16 @@ class BetsController < ApplicationController
                                     ['audience', "private"]
                                    ])
       root_url  + "#{user}?" + params
+    end
+
+    def admin
+      @admin = User.admin(@bet)
+    end
+
+    def ensure_user_is_admin
+      if current_user != @admin
+        flash[:error] = "Only the creator of the bet can close the bet."
+        redirect_to bet_path(@bet)
+      end
     end
 end

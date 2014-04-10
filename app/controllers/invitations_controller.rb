@@ -1,5 +1,5 @@
 class InvitationsController < ApplicationController
-  before_action :set_bet, only: [:create]
+  before_action :set_bet
 
   def new
     @invitation = Invitation.new
@@ -13,14 +13,13 @@ class InvitationsController < ApplicationController
         emails.each do |email|
           friend = User.find_by(email: email.strip.downcase)
             if friend
-              unless (friend == current_user) || (Position.where(user_id: friend.id, bet_id: @bet.id).size > 0)
-              #create join entry
+              unless (friend == current_user) || already_invited?(friend)
               p = Position.new(user_id: friend.id, bet_id: @bet.id, status: "pending", admin: false)
               p.save(validate: false)
                 end
             else
               #send email invite
-              InvitationNotifier.invited(email.strip, current_user.email, Bet.find(params[:bet_id])).deliver
+              InvitationNotifier.invited(email.strip, current_user.email, @bet).deliver
             end
         end
         format.html { redirect_to bets_path }
@@ -42,4 +41,7 @@ class InvitationsController < ApplicationController
     params.require(:friends)
   end
 
+  def already_invited?(friend)
+    Position.where(user_id: friend.id, bet_id: @bet.id).size > 0
+  end
 end
