@@ -1,11 +1,11 @@
 BetSettler::Application.routes.draw do
-  resources :bets do
+  resources :bets, except: [:update] do
     member do
       get '/close', to: 'bets#close', as: 'close'
       post '/close', to: 'bets#close_2', as: 'close_2'
       get '/stats', to: "bets#stats", as: 'stats'
     end
-    resources :positions
+    resources :positions, except: [:update, :edit]
     resources :invitations
     resources :comments
   end
