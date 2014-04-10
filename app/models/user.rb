@@ -9,6 +9,10 @@ class User < ActiveRecord::Base
 
   validates_uniqueness_of :email, case_sensitive: false
 
+  scope :participating, lambda { |bet| joins(:positions).where(positions: {bet_id: bet.id, status: "accepted"}) }
+  scope :admin, lambda { |bet| joins(:positions).where(positions: {bet_id: bet.id, admin: true}).take }
+  scope :winner, lambda { |email| find_by(email: email) }
+
   #temporarily skip required confirmation of email
   #remove in production
   protected
