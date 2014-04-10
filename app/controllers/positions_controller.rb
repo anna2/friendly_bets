@@ -1,5 +1,5 @@
 class PositionsController < ApplicationController
-  before_action :set_bet, only: [:create, :new]
+  before_action :set_bet
   before_action :set_position, only: [:destroy]
   before_action :authenticate_user!
 
@@ -38,8 +38,13 @@ class PositionsController < ApplicationController
   end
 
   def destroy
-    @position.destroy
-    redirect_to bets_path
+    if user_has_set_position?
+      flash[:error] = "You cannot exit a bet after creating a position on it."
+      redirect_to bet_path(@bet)
+    else
+      @position.destroy
+      redirect_to bets_path
+    end
   end
 
 
@@ -63,5 +68,9 @@ class PositionsController < ApplicationController
 
   def new_bet_requires_position?
     Position.on_current_bet(@bet).size == 0
+  end
+
+  def user_has_set_position?
+    !Position.current(current_user, @bet).position.nil?
   end
 end
